@@ -8,7 +8,7 @@ const Home = () => {
         <div className="d-flex">
           <div className="p-2">
             <img className="ttr-width-50px rounded-circle"
-                 src="../images/nasa-logo.jpg"/>
+                 src="../images/nasa-logo.jpg" alt="NASA Logo"/>
           </div>
           <div className="p-2 w-100">
             <textarea
@@ -24,7 +24,7 @@ const Home = () => {
                 <i className="far fa-map-location me-3"></i>
               </div>
               <div className="col-2">
-                <a className="btn btn-primary rounded-pill fa-pull-right fw-bold ps-4 pe-4">
+                <a className="btn btn-primary rounded-pill fa-pull-right fw-bold ps-4 pe-4" href="/#">
                   Tuit
                 </a>
               </div>
