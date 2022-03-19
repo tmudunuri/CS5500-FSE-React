@@ -10,7 +10,7 @@ const Tuit = ({tuit, deleteTuit}) => {
         {
           tuit.postedBy &&
           <img src={`../images/${tuit.postedBy.username}.jpg`}
-               className="ttr-tuit-avatar-logo rounded-circle"/>
+               className="ttr-tuit-avatar-logo rounded-circle" alt="avatar"/>
         }
       </div>
       <div className="w-100">
