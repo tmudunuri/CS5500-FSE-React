@@ -4,8 +4,6 @@ import {HashRouter} from "react-router-dom";
 import axios from "axios";
 import {findAllUsers} from "../services/users-service";
 
-jest.mock('axios');
-
 const MOCKED_USERS = [
     {username: 'ellen_ripley', password: 'lv426', email: 'repley@weyland.com', _id: "123"},
     {username: 'sarah_conor', password: 'illbeback', email: 'sarah@bigjeff.com', _id: "234"},
@@ -22,13 +20,26 @@ describe('static renders', () => {
     });
 });
 
+describe('async renders', () => {
+    test('user list renders async', async () => {
+        const users = await findAllUsers();
+        render(
+            <HashRouter>
+                <UserList users={users}/>
+            </HashRouter>);
+        const linkElement = screen.getByText(/NASA/i);
+        expect(linkElement).toBeInTheDocument();
+    })
+});
 
 describe('mocked renders', () => {
     test('user list renders mocked', async () => {
-        axios.get.mockImplementationOnce(() =>
+        const mock = jest.spyOn(axios, 'get');
+        mock.mockImplementation(() =>
             Promise.resolve({data: {users: MOCKED_USERS}}));
         const response = await findAllUsers();
         const users = response.users;
+        mock.mockRestore();
 
         render(
             <HashRouter>
