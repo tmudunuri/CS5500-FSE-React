@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import MyTuits from "./my-tuits";
-import {HashRouter, Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
+import {Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
 import * as service from "../../services/security-service"
 import TuitsAndReplies from "./tuits-and-replies";
 import Media from "./media";
@@ -11,13 +11,22 @@ const Profile = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [profile, setProfile] = useState({});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(async () => {
+        // const fetchProfile = async () => {
+        //     const user = await service.profile();
+        //     setProfile(user);
+        // }
+        // fetchProfile()
+        //     // make sure to catch any error
+        //     .catch(navigate('/login'));
         try {
             const user = await service.profile();
             setProfile(user);
         } catch (e) {
             navigate('/login');
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const logout = () => {
         service.logout()
@@ -31,11 +40,11 @@ const Profile = () => {
                     <i className="fa fa-badge-check text-primary"></i></h4>
                 <span className="ps-2">67.6K Tuits</span>
                 <div className="mb-5 position-relative">
-                    <img className="w-100" src="../images/nasa-profile-header.jpg"/>
+                    <img className="w-100" src="../images/nasa-profile-header.jpg" alt="NASA profile"/>
                     <div className="bottom-0 left-0 position-absolute">
                         <div className="position-relative">
                             <img className="position-relative ttr-z-index-1 ttr-top-40px ttr-width-150px"
-                                 src="../images/nasa-3.png"/>
+                                 src="../images/nasa-3.png" alt="NASA 3"/>
                         </div>
                     </div>
                     <Link to="/profile/edit"

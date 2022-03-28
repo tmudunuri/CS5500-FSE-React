@@ -9,6 +9,7 @@ const TuitScreen = () => {
     const findTuitById = () =>
         service.findTuitById(tid)
             .then(tuit => setTuit(tuit));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(findTuitById, []);
     return(
         <div>

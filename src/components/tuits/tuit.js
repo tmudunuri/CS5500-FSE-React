@@ -2,10 +2,10 @@ import React from "react";
 import TuitStats from "./tuit-stats";
 import TuitImage from "./tuit-image";
 import TuitVideo from "./tuit-video";
-import {useNavigate, Link} from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const Tuit = ({tuit, deleteTuit, likeTuit, dislikeTuit}) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const daysOld = (tuit) => {
         const now = new Date();
         const nowMillis = now.getTime();
@@ -35,7 +35,7 @@ const Tuit = ({tuit, deleteTuit, likeTuit, dislikeTuit}) => {
                 {
                     tuit.postedBy &&
                     <img src={`../images/${tuit.postedBy.username}.jpg`}
-                         className="ttr-tuit-avatar-logo rounded-circle"/>
+                         className="ttr-tuit-avatar-logo rounded-circle" alt="Tuit avatar"/>
                 }
             </div>
             <div className="w-100">
