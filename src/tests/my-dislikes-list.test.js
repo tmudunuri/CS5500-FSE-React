@@ -1,23 +1,30 @@
 import Tuits from "../components/tuits/index";
-import {screen, render} from "@testing-library/react";
+import MyDislikes from "../components/profile/my-dislikes";
+import {screen, render, waitFor} from "@testing-library/react";
 import {HashRouter} from "react-router-dom";
-import {findAllTuitsDislikedByUser, userDislikesTuit} from "../services/likes-service";
-import axios from "axios";
+import {userDislikesTuit, api} from "../services/likes-service";
 import {createUser, deleteUsersByUsername} from "../services/users-service";
 import {createTuit, deleteTuit} from "../services/tuits-service";
 
-const MOCKED_TUITS = [
-    {tuit: "aaa", _id: "1"},
-    {tuit: "alice's tuit", _id: "2"},
-];
 const hellen = {
     username: 'hellenpaine',
     password: 'hk426',
     email: 'hellenkeller@test.com'
 };
-const sampleTuit = {
-    tuit: 'This is a test Tuit.',
-}
+const MOCKED_TUITS = [
+    {
+        tuit: "aaa",
+        postedBy: hellen,
+        stats: {dislikes: 10},
+        _id: "1"
+    },
+    {
+        tuit: "alice's tuit",
+        postedBy: hellen,
+        stats: {dislikes: 20},
+        _id: "2"
+    }
+];
 let newUser;
 let uid;
 let tid;
@@ -28,9 +35,9 @@ beforeAll(async () => {
     await deleteUsersByUsername(hellen.username);
     newUser = await createUser(hellen);
     uid = newUser._id
-    const newTuit = await createTuit(uid, sampleTuit);
+    const newTuit = await createTuit(uid, {tuit: MOCKED_TUITS[1].tuit});
     tid = newTuit._id;
-    const dislikesTuit = await userDislikesTuit(uid, tid);
+    await userDislikesTuit(uid, tid);
 })
 
 describe('static renders', () => {
@@ -44,34 +51,37 @@ describe('static renders', () => {
     });
 });
 
-describe('async renders', () => {
-    test('tuit list renders async', async () => {
-        const allTuits = await findAllTuitsDislikedByUser(uid);
-        render(
-            <HashRouter>
-                <Tuits tuits={allTuits}/>
-            </HashRouter>);
-        const linkElement = screen.getByText(/This is a test Tuit./i);
-        expect(linkElement).toBeInTheDocument();
-    })
-});
+describe('my dislikes screen renders disliked tuit mocked '
+    + 'and also displays correct dislikes count', () => {
+    const mock = jest.spyOn(api, 'get');
 
-describe('renders mocked', () => {
-    test('tuit list renders mocked', async () => {
-        const mock = jest.spyOn(axios, 'get');
-        mock.mockImplementationOnce(() =>
-            Promise.resolve({data: {tuits: MOCKED_TUITS}}));
-        const response = await findAllTuitsDislikedByUser(uid);
-        const mockedTuits = response;
+    afterEach(() => {
         mock.mockRestore();
+    })
+
+    test("render disliekd tuits", async () => {
+        mock.mockImplementation(() => {
+            return Promise.resolve({data: MOCKED_TUITS});
+        });
 
         render(
             <HashRouter>
-                <Tuits tuits={mockedTuits}/>
-            </HashRouter>);
-        const linkElement = screen.getByText(/This is a test Tuit./i);
-        expect(linkElement).toBeInTheDocument();
-    });
+                <MyDislikes/>
+            </HashRouter>
+        )
+
+        await waitFor(() => {
+            MOCKED_TUITS.map(eachTuit => {
+                let name = eachTuit.postedBy.username
+                const dislikesCount = eachTuit.stats.dislikes
+                const nameElements = screen.getAllByText(name, {exact: false});
+                const tuitElements = screen.getAllByText(eachTuit.tuit, {exact: false});
+                nameElements.forEach(e => expect(e).toBeInTheDocument());
+                tuitElements.forEach(e => expect(e).toBeInTheDocument());
+                expect(screen.getByText(dislikesCount)).toBeInTheDocument();
+            })
+        })
+    })
 });
 
 // clean up after ourselves
